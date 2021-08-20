@@ -1,13 +1,25 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RiContactsLine } from "react-icons/ri";
 import { BsPhone } from "react-icons/bs";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import shortid from "shortid";
 import "./Form.module.css";
-import { addContact } from "../../redux/contacts/contactsAction";
+import { getFiltredContacts } from "../../redux/contacts/contactsSelector";
+import { addContact } from "../../redux/contacts/contactsOperations";
 
 function MyForm() {
   const dispatch = useDispatch();
+  const contacts = useSelector(getFiltredContacts);
+  const handleSubmit = (newContact) => {
+    if (contacts.some(({ name }) => name === newContact.name)) {
+      alert(`${newContact.name} already in phonebook`);
+      return;
+    }
+    dispatch(addContact(newContact));
+  };
+
+  let nameId = shortid.generate();
+  let phoneId = shortid.generate();
   return (
     <Formik
       initialValues={{ name: "", number: "" }}
@@ -29,21 +41,31 @@ function MyForm() {
       }}
       onSubmit={(values, { resetForm }) => {
         const { name, number } = values;
-        dispatch(addContact({ id: shortid.generate(), name, number }));
+        handleSubmit({ name, number });
         resetForm();
       }}
     >
       <Form autoComplete='off'>
-        <label htmlFor='name'>
+        <label htmlFor={`id-${nameId}`}>
           <RiContactsLine color='#c21111e2'></RiContactsLine> Name
         </label>
-        <Field type='name' name='name' placeholder='enter name' />
+        <Field
+          type='text'
+          name='name'
+          id={`id-${nameId}`}
+          placeholder='enter name'
+        />
         <ErrorMessage name='name' />
 
-        <label htmlFor='number'>
+        <label htmlFor={`id-${phoneId}`}>
           <BsPhone color='#c21111e2'></BsPhone>Number
         </label>
-        <Field type='tel' name='number' placeholder='+111-111-11' />
+        <Field
+          type='tel'
+          name='number'
+          id={`id-${phoneId}`}
+          placeholder='+111-111-11'
+        />
         <ErrorMessage name='number' />
 
         <button type='submit'>Add contact</button>

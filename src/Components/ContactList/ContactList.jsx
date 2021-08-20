@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 import { RiContactsLine, RiDeleteBinLine } from "react-icons/ri";
 import { BsPhone } from "react-icons/bs";
 import {
@@ -7,14 +8,26 @@ import {
   Paragraph,
   Button,
   Contain,
+  Load,
 } from "./ContactList.styled";
-import { getFiltredContacts } from "../../redux/contacts/contactsSelector";
-import { deleteContact } from "../../redux/contacts/contactsAction";
+import {
+  getFiltredContacts,
+  getLoading,
+} from "../../redux/contacts/contactsSelector";
+import {
+  deleteContact,
+  fetchContacts,
+} from "../../redux/contacts/contactsOperations";
 
 function ContactList() {
   const contacts = useSelector(getFiltredContacts);
   const dispatch = useDispatch();
+  const loading = useSelector(getLoading);
   const onDeleteContact = (id) => dispatch(deleteContact(id));
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <ListContact>
@@ -38,6 +51,7 @@ function ContactList() {
           </Button>
         </ItemContact>
       ))}
+      {loading && <Load>...Wait load...</Load>}
     </ListContact>
   );
 }

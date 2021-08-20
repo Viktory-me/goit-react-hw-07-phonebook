@@ -31,3 +31,6 @@ export const Contain = styled.div`
   align-items: center;
   width: 120px;
 `;
+export const Load = styled.div`
+  text-align: center;
+`;

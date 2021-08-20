@@ -1,15 +1,21 @@
-export const getFiltered = (state) => state.phonebook.filter;
+import { createSelector } from "@reduxjs/toolkit";
 
-export const getContactsList = (state) => state.phonebook.contacts;
+export const getError = (state) => state.error;
 
-export const getFiltredContacts = (state) => {
-  const filter = getFiltered(state);
-  const contacts = getContactsList(state);
+export const getLoading = (state) => state.isLoading;
 
-  const normalizeFilter = filter.toLowerCase();
-  return contacts.filter(
-    ({ name, number }) =>
-      name.toLowerCase().includes(normalizeFilter) ||
-      number.includes(normalizeFilter)
-  );
-};
+export const getFiltred = (state) => state.filter;
+
+export const getContactsList = (state) => state.contacts.items;
+
+export const getFiltredContacts = createSelector(
+  [getFiltred, getContactsList],
+  (filter, contacts) => {
+    const normalizeFilter = filter.toLowerCase();
+    return contacts.filter(
+      ({ name, number }) =>
+        name.toLowerCase().includes(normalizeFilter) ||
+        number.includes(normalizeFilter)
+    );
+  }
+);
